@@ -1,0 +1,36 @@
+---
+title: "Victoria Participant Summary"
+author: "Melissa Tobin"
+date: '2019-01-17'
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Participant Summary
+
+* A total of 281 participants completed the health survey. 
+* 149 participants wore a SenseDoc. 
+
+## Load Packages
+
+```{r}
+library(ggplot2)
+library(tidyverse)
+library(ggmap)
+library(dplyr)
+```
+
+## Set Working Directory and Load Data
+
+```{r}
+getwd
+setwd("/Volumes/hkr-storage/Research/dfuller/Walkabilly/studies/INTERACT/Data/Victoria/SenseDoc/combined")
+health_data <- read_csv("Victoria_health_q_data_20180209_final.csv")
+eligibility_data <- read_csv("Victoria_eligibility.csv")
+health_data %>% count(completed, sort = TRUE)
+completed_health_data <- filter(health_data, completed == 1)
+eligibility_data %>% count(completed, sort = TRUE)
+completed_eligibility_data <- filter(eligibility_data, completed == 1)
