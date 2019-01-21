@@ -20,17 +20,51 @@ knitr::opts_chunk$set(echo = TRUE)
 library(ggplot2)
 library(tidyverse)
 library(ggmap)
-library(dplyr)
+library(janitor)
+library(knitr)
+library(plyr)
 ```
 
 ## Set Working Directory and Load Data
 
 ```{r}
-getwd
 setwd("/Volumes/hkr-storage/Research/dfuller/Walkabilly/studies/INTERACT/Data/Victoria/SenseDoc/combined")
 health_data <- read_csv("Victoria_health_q_data_20180209_final.csv")
-eligibility_data <- read_csv("Victoria_eligibility.csv")
 health_data %>% count(completed, sort = TRUE)
 completed_health_data <- filter(health_data, completed == 1)
+eligibility_data <- read_csv("Victoria_eligibility.csv")
 eligibility_data %>% count(completed, sort = TRUE)
 completed_eligibility_data <- filter(eligibility_data, completed == 1)
+```
+
+## Gender Distribution
+
+```{r}
+tabyl(completed_eligibility_data$E2_gender, sort = TRUE)
+# 144 participants or 46.6% identified as male
+#160 participants or 51.7% identified as female
+# 1 participant identified as trans (0.003%)
+# 2 participants identified as other (0.006%)
+# 1 participant identified as female and male
+# 1 participant identified as male and other 
+
+```
+
+## Creating a table for gender distribution
+
+```{r}
+gender_table <- as.factor(completed_eligibility_data$E2_gender)
+gender_table <- summary(gender_table)
+gender_table <- as.data.frame(gender_table)
+gender_table$Varl <- substring(row.names(gender_table), 1)
+gender_table$response <- revalue(as.factor(gender_table$Varl), c("[1]" = "Male", "[2]" = "Female", "[3]" = "Trans", "[4]" = "Other"))
+# Participants who chose more than 1 response for gender were categorized as other (1+2) or (1+4)
+```
+
+## Creating a plot for gender distribution
+
+```{r}
+ggplot(data.frame(completed_eligibility_data$E2_gender), aes(x = completed_eligibility_data$E2_gender)) + geom_bar() + ylab("Count") + xlab("Gender") + ggtitle("INTERACT Gender Distribution")
+
+```
+
